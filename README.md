@@ -61,6 +61,9 @@ The next step in the pipeline is to not only acquire the data that we will be wo
 
 The steps taken and necessary code for this process will first be tested in Jupyter Notebook `prep-explore.ipynb`, then they will be documented and compiled into callable functions stored in `wrangle.py` so that they can be reused in other artifacts created during the pipeline.
 
+## Preparation
+Once the data is in our environment the next thing to do is to start looking into the data to make sure it's useable for our project, correcting any issues you find, and making any transformations needed to feed the data into a machine learning model.
+
 In addition we will create a data-dictionary that explains the features contained in the data.  We do this to familiarize ourselves with the data and to elimate any guess-work and incorrect assumptions that can occur when someone else looks at the data.  Here's ours:
 
 | Column | Description |
