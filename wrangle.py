@@ -1,5 +1,10 @@
 import pandas as pd
+import numpy as np
 import os
+
+import sklearn
+from sklearn.model_selection import train_test_split
+
 
 def get_db_url(database, hostname='', username='', password='', env=''):
     '''Creates a URL for a specific database and credential set to be used with pymysql.
@@ -100,3 +105,28 @@ def get_tidy_telco_data():
 def get_tidier_telco_data():
     df = get_tidy_telco_data()
     return pd.get_dummies(df, columns=['internet_service_type', 'payment_type', 'contract_type'], dtype=bool)
+
+
+def train_test_validate_verify_split(df, seed=8, stratify='churn'):
+    # First split off our training data.
+    train, tvv = train_test_split(
+        df, 
+        test_size=1/2, 
+        random_state=seed, 
+        stratify=( df[stratify] if stratify else None)
+    )
+    # Then split our testing data.
+    test, vv = train_test_split(
+        tvv,
+        test_size=3/5,
+        random_state=seed,
+        stratify= (tvv[stratify] if stratify else None)
+    )
+    # Then split validate and verify data.
+    validate, verify = train_test_split(
+        vv,
+        test_size=1/2,
+        random_state=seed,
+        stratify= (vv[stratify] if stratify else None)
+    )
+    return train, test, validate, verify
