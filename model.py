@@ -8,18 +8,32 @@ import wrangle
 
 # SKlearn Libraries
 from sklearn.linear_model import LogisticRegression
+from sklearn.utils import resample
 
 seed = 8
 
-def get_best_model():
+def get_model():
     # Import the ready to model data
     df = wrangle.get_tidier_telco_data()
+
     # Split off the training data
     train, test, validate, verify = wrangle.train_test_validate_verify_split(df)
+
+    # Upsample the training data to balance a class imbalance
+    minority_upsample = resample( train[train.churn],   #DF of samples to replicate
+                                replace = True,         #Implements resampling with replacement, Default=True
+                                n_samples = len(train[~train.churn]), #Number of samples to produce
+                                random_state= 8         #Random State seed for reproducibility
+                                )
+    #Then glue the upsample to the original
+    train = pd.concat([minority_upsample, train[~train.churn]])
+
     # Separate the features from the target
     X_train, y_train = wrangle.x_y_split(train)
+
     # Create the algorithm class
     model = LogisticRegression(max_iter=200, random_state=8)
+
     # and fit it to our training data
     model.fit(X_train,y_train) 
     
