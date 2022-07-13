@@ -104,7 +104,12 @@ def get_tidy_telco_data():
 
 def get_tidier_telco_data():
     df = get_tidy_telco_data()
-    return pd.get_dummies(df, columns=['internet_service_type', 'payment_type', 'contract_type'], dtype=bool)
+    dummy_columns = ['internet_service_type', 'payment_type', 'contract_type']
+    temp_df = df[dummy_columns]
+    df = pd.get_dummies(df, columns=dummy_columns, dtype=bool)
+    df = pd.concat([df, temp_df], axis=1)
+    df.columns = df.columns.str.lower()
+    return df
 
 
 def train_test_validate_verify_split(df, seed=8, stratify='churn'):
@@ -130,3 +135,18 @@ def train_test_validate_verify_split(df, seed=8, stratify='churn'):
         stratify= (vv[stratify] if stratify else None)
     )
     return train, test, validate, verify
+
+def x_y_split(df):
+    features = ['tenure',
+                'contract_type_two year',
+                'internet_service_type_none',
+                # 'total_charges', # This is just a result of monthly_charges and tenure
+                'online_security',
+                'monthly_charges',
+                'paperless_billing',
+                'internet_service_type_fiber optic',
+                'payment_type_electronic check',
+                'contract_type_month-to-month']
+    x = df[features]
+    y = df['churn']
+    return x, y
