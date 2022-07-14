@@ -114,7 +114,12 @@ In addition we will create a data-dictionary that explains the features containe
 | `contract_type` | Renewal term for customer's contract. |
 
 ## Exploration
+In our exploration notebook we will dive into the data in an attempt to discover the best predictors/influencers of customer churn in order to answer the company's questions and to identify the best features to use in our machine learning model.
 
 ## Modeling
+During modeling we'll decide on which metric to score our models by, and then build a few of them until we can narrow it down to our best model.  We'll evaluate the performance of our models and make an educated guess about whether it is worthwhile to deploy.
 
 ## Delivery
+Delivery is all about cleaning up after ourselves.  A new notebook (`Final_Report.ipynb`) will be created with for the purpose of presenting to our stakeholders.  We'll also package the heavy lifting done during the modeling phase into a helper library called `model.py`.
+
+Additionally we'll be sure to create a `predictions.csv` file to satisfy the requirements for this project.
