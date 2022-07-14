@@ -34,6 +34,7 @@ def get_db_url(database, hostname='', username='', password='', env=''):
     return url
 
 def new_telco_data():
+    """Downloads a copy of telco data from CodeUp's SQL Server"""
     url = get_db_url('telco_churn',env='./env.py')
     query = """
         SELECT 
@@ -52,6 +53,9 @@ def new_telco_data():
     return df
 
 def get_telco_data():
+    """Returns an uncleaned copy of the telco data from telco.csv.
+    If the file does not exist, grabs a new copy and creates the file.
+    """
     filename = "telco.csv"
     
     # if file is available locally, read it
@@ -72,10 +76,16 @@ def get_telco_data():
 
 
 def get_tidy_telco_data():
+    """Returns a cleaned-up version of the telco data.
+    Drops 3 joiner columns, all columns with binary data are converted to boolean dtypes,
+    and 11 missing values from total charges are imputed with 0s
+    
+    DOES NOT CREATE DUMMY COLUMNS"""
     # Get a fresh copy of the data
     df = get_telco_data()
     # Drop columns that just repeat the data in other columns
     df = df.drop(columns=['contract_type_id', 'payment_type_id', 'internet_service_type_id'])
+    # The missing values in total_charges were because the customer was a fresh customer that hadn't been charged for the month yet.
     # Replace the spaces in total_charges with a 0 and sets the column's type to a float
     df.total_charges = df.total_charges.replace(' ', 0).astype(np.float64)
     # Convert the senior citizen column into boolean type.
@@ -103,6 +113,9 @@ def get_tidy_telco_data():
     return df
 
 def get_tidier_telco_data():
+    """Returns a cleaned-up version of the telco data.
+    Drops 3 joiner columns, all columns with binary data are converted to boolean dtypes,
+    and 11 missing values from total charges are imputed with 0s"""
     df = get_tidy_telco_data()
     dummy_columns = ['internet_service_type', 'payment_type', 'contract_type']
     temp_df = df[dummy_columns]
@@ -113,6 +126,8 @@ def get_tidier_telco_data():
 
 
 def train_test_validate_verify_split(df, seed=8, stratify='churn'):
+    """Returns 4 seperate dataframes which are stratified samples of the original dataframe.
+    Traditionally this should be 3 dataframes, but I overestimated how much I would be using the 3rd sample set."""
     # First split off our training data.
     train, tvv = train_test_split(
         df, 
@@ -137,6 +152,10 @@ def train_test_validate_verify_split(df, seed=8, stratify='churn'):
     return train, test, validate, verify
 
 def x_y_split(df):
+    """Returns two dataframes from the provided one.
+    The x dataframe includes only the features that were deemed valueable enough to include in modeling.
+    The y dataframe includes only the target feature.
+    """
     features = ['tenure',
                 'contract_type_two year',
                 'internet_service_type_none',
@@ -150,3 +169,28 @@ def x_y_split(df):
     x = df[features]
     y = df['churn']
     return x, y
+
+def get_xy_sets():
+    """Returns a nested dictionary full of the dataframes relevant for each scoring level.
+    This was actually incredibly convenient for me.
+    """
+    # Import the ready to model data
+    df = get_tidier_telco_data()
+
+    # Split into the four sample-groups
+    train, test, validate, verify = train_test_validate_verify_split(df)
+
+    # Get the X and Y sets for each dataset
+    X_train, y_train = x_y_split(train)
+    X_test, y_test = x_y_split(test)
+    X_validate, y_validate = x_y_split(validate)
+    X_verify, y_verify = x_y_split(verify)
+
+    # Package everything into a neat dictionary and return
+    sets= {
+        'train': {'x':X_train, 'y':y_train, 'o':train},
+        'test': {'x':X_test, 'y':y_test, 'o':test},
+        'validate': {'x':X_validate, 'y':y_validate, 'o':validate},
+        'verify': {'x':X_verify, 'y':y_verify, 'o':verify}
+    }
+    return sets

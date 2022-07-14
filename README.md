@@ -13,6 +13,28 @@ As an overview, the DS Pipeline consists of the followings steps in order:
  - Modeling
  - Delivery
 
+### Steps to reproduce
+First download a copy of each file or clone this repository.
+
+To run this project you will need to fulfill one of the following requirements:
+ > An environment file named `env.py` in the same directory as the other files.  The enviornment file should be structured the same as below and should contain your unique credentials to CodeUp's SQL server.
+ ```py
+hostname='data.codeup.com'
+username='your_username'
+password='your_password'
+```
+> A csv file named `telco.csv` in the same directory as the other files.  You can download a copy of the data from [Kaggle](https://www.kaggle.com/datasets/blastchar/telco-customer-churn?resource=download)
+
+You will also need to ensure the proper libraries are installed in your python environment.  You can install the libraries easily by running the following command in your python shell:
+```py
+%pip install numpy
+%pip install pandas
+%pip install matplotlib
+%pip install seaborn
+%pip install plotly
+%pip install scipy
+%pip install sklearn
+```
 ___________
 
 ## Planning 
@@ -66,5 +88,33 @@ Once the data is in our environment the next thing to do is to start looking int
 
 In addition we will create a data-dictionary that explains the features contained in the data.  We do this to familiarize ourselves with the data and to elimate any guess-work and incorrect assumptions that can occur when someone else looks at the data.  Here's ours:
 
-| Column | Description |
-| --- | ---|
+### Data Dictionary
+|Column | Description|
+|---|---|
+| `customer_id` | Unique identifier for the customer |
+| `churn` | Yes/No - Yes if customer left company |
+| `gender` | Gender of the customer |
+| `senior_citizen` | 0/1 - 1 if the customer is a senior citizen |
+| `partner` | Yes/No - Yes if customer has a spouse or partner |
+| `dependents` | Yes/No - Yes if customer has children or dependents |
+| `tenure` | Measure in months of how long customer has been with company |
+| `phone_service` | Yes/No - Yes if customer has phone service |
+| `multiple_lines` | Does customer with phone service have more than one line? |
+| `online_security` | Does customer use online security services? |
+| `online_backup` | Does customer use online backup services? |
+| `device_protection` | Does customer use device protection services? |
+| `tech_support` | Does customer use technical support services? |
+| `streaming_tv` | Does customer use streaming television services? |
+| `streaming_movies` | Does customer use movie streaming services? |
+| `paperless_billing` | Does customer use paperless billing? |
+| `monthly_charges` | Measure in USD that customer is billed monthly |
+| `total_charges` | Measure in USD that customer has been charged since joining the company. |
+| `internet_service_type` | The type of internet service customer uses. None if customer does not use internet. |
+| `payment_type` | Customer's preferred payment method |
+| `contract_type` | Renewal term for customer's contract. |
+
+## Exploration
+
+## Modeling
+
+## Delivery

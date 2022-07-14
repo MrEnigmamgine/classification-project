@@ -10,9 +10,13 @@ import wrangle
 from sklearn.linear_model import LogisticRegression
 from sklearn.utils import resample
 
+import plotly.express as px
+
 seed = 8
 
 def get_model():
+    """Returns a model trained on an upsampled training set.  
+    The model's hyperparameters are tuned for the optimum performance found during testing."""
     # Import the ready to model data
     df = wrangle.get_tidier_telco_data()
 
@@ -41,6 +45,8 @@ def get_model():
 
 
 def chi2_test(df, alpha=0.05):
+    """Performs a chi2 test on a crosstap-like dataframe.
+    Intended to declutter the final report notebook."""
     chi2, p, degf, expected = stats.chi2_contingency(df)
     print('Observed\n')
     print(df.values)
@@ -55,3 +61,24 @@ def chi2_test(df, alpha=0.05):
         print("We reject the null hypothesis")
     else:
         print("We fail to reject the null hypothesis")
+
+def confusion_matrix_treemap(tn,fp,fn,tp):
+    """Draws a treemap from confusion matrix data.
+    This method was clunky, unwieldy, and used a lot of hard-coding, so I thought it was best to hide it in the helper library."""
+    fig = px.treemap(   title='Model Predictions compared to truth',
+                        values= [0,0]+[tn,fp,fn,tp] ,
+                        names= ['churned','not churned','true_negative','false_positive','false_negative','true_positive'],
+                        parents=['','', 'not churned','not churned','churned','churned'],
+                        width=600, height=400,
+                        color=['churned','not churned','true_negative','false_positive','false_negative','true_positive'],
+                        color_discrete_map= {'churned':'FF221F',
+                                            'not churned':'099C4E',
+                                            'true_negative':'099C4E',
+                                            'false_positive':'FF221F',
+                                            'false_negative':'099C4E',
+                                            'true_positive':'FF221F'}
+                        )
+
+    fig.update_traces(root_color="lightgrey")
+    fig.update_layout(margin = dict(t=45, l=0, r=0, b=0))
+    fig.show()
